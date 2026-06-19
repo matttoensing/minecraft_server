@@ -1,0 +1,36 @@
+name: Deploy Minecraft to AWS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy files to AWS via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          source: "docker-compose.yml,server.properties"
+          target: "~/minecraft-server"
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd ~/minecraft-server
+            # If server.properties exists, copy it into the container's data volume directory
+            mkdir -p minecraft-data
+            if [ -f server.properties ]; then cp server.properties minecraft-data/; fi
+            docker-compose pull
+            docker-compose up -d

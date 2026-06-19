@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  minecraft:
+    image: itzg/minecraft-server:2026.6.0-java25-alpine
+    container_name: minecraft_server
+    ports:
+      - "25565:25565"
+    environment:
+      EULA: "TRUE"
+      VERSION: "26.2"
+      TYPE: "VANILLA"
+      MEMORY: "3G"
+    volumes:
+      - ./minecraft-data:/data
+    restart: unless-stopped
+    tty: true
+    stdin_open: true
