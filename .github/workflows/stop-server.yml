@@ -1,11 +1,15 @@
 name: 🔴 Stop Minecraft Server
 
 on:
-  workflow_dispatch: # Allows manual button click in GitHub web UI
+  workflow_dispatch:
 
 permissions:
-  id-token: write   # Required to fetch temporary AWS credentials
-  contents: read    # Required to check out repository code
+  id-token: write
+  contents: read
+
+# Ensure this block is present here too
+env:
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
 
 jobs:
   stop:
@@ -14,8 +18,7 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          # Change this to your exact AWS Account Number and Role Name
-          role-to-assume: arn:aws:iam::513249876311:role/GithubActionsWorkflowRole
+          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/GithubActionsWorkflowRole
           aws-region: us-east-1
 
       - name: Gracefully Shut Down Docker via SSH
