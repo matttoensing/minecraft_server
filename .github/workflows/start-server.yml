@@ -18,8 +18,8 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::YOUR_ACCOUNT_ID:role/GithubActionsWorkflowRole
-          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::513249876311:role/GithubActionsWorkflowRole
+          aws-region: us-east-2
 
       - name: Boot EC2 Instance
         run: |
