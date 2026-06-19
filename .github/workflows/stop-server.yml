@@ -1,0 +1,33 @@
+name: 🔴 Stop Minecraft Server
+
+on:
+  workflow_dispatch: # Allows manual button click in GitHub web UI
+
+permissions:
+  id-token: write   # Required to fetch temporary AWS credentials
+  contents: read    # Required to check out repository code
+
+jobs:
+  stop:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # Change this to your exact AWS Account Number and Role Name
+          role-to-assume: arn:aws:iam::513249876311:role/GithubActionsWorkflowRole
+          aws-region: us-east-1
+
+      - name: Gracefully Shut Down Docker via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.AWS_HOST }}
+          username: ubuntu
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd ~/minecraft-server
+            docker-compose down
+
+      - name: Power Down EC2 Instance
+        run: |
+          aws ec2 stop-instances --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
