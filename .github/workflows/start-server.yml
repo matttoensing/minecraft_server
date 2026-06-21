@@ -1,5 +1,4 @@
 name: 🟢 Start Minecraft Server
-
 on:
   workflow_dispatch:
 
@@ -7,16 +6,13 @@ permissions:
   id-token: write
   contents: read
 
-# Paste this exact block below your permissions settings:
-env:
-  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
-
 jobs:
   start:
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS Credentials via OIDC
-        uses: aws-actions/configure-aws-credentials@v4
+        # Upgraded from @v4 to @v4.1.0+ which supports Node 24 natively
+        uses: aws-actions/configure-aws-credentials@v4.1.0
         with:
           role-to-assume: arn:aws:iam::513249876311:role/GithubActionsWorkflowRole
           aws-region: us-east-2
@@ -27,12 +23,13 @@ jobs:
           aws ec2 wait instance-running --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
 
       - name: Deploy Latest Minecraft Image via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        # Upgraded from @v1.0.3 to @v1.2.0+ to fully support modern Node runners
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
-            cd ~/minecraft-server
-            docker-compose pull
-            docker-compose up -d
+            # Switched to modern 'docker compose' to avoid 'unhandled non-multipart' bugs
+            docker compose pull itzg/minecraft-server:latest
+            docker compose up -d
