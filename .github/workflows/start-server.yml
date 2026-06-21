@@ -6,8 +6,8 @@ permissions:
   id-token: write
   contents: read
 
-# The warning bypass is re-enabled here so the build stays green until September 2026
 env:
+  # Bypasses the Node 20 runner deprecation warning until September 2026
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
 
 jobs:
@@ -26,12 +26,15 @@ jobs:
           aws ec2 wait instance-running --instance-ids ${{ secrets.AWS_EC2_INSTANCE_ID }}
 
       - name: Deploy Latest Minecraft Image via SSH
-        # Reverted to v1.0.3 to bypass the "no configuration file provided" runner bug
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.AWS_HOST }}
           username: ubuntu
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
+            # Navigate to the folder containing your docker-compose.yml file
+            cd /home/ubuntu
+            
+            # Fetch the newest image layer and start the container
             docker compose pull itzg/minecraft-server:latest
             docker compose up -d
