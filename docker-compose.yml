@@ -6,8 +6,8 @@ services:
       - "25565:25565"
     environment:
       EULA: "TRUE"
-      VERSION: "24w26a"
-      TYPE: "VANILLA"      # This must be VANILLA even for snapshots!
+      VERSION: "LATEST"    # Tells Docker to dynamically look up the newest snapshot
+      TYPE: "SNAPSHOT"     # The image helper accepts SNAPSHOT when VERSION is LATEST or SNAPSHOT
       MEMORY: "3G"
     volumes:
       - ./minecraft-data:/data
