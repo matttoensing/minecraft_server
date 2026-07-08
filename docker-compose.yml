@@ -7,7 +7,7 @@ services:
     environment:
       EULA: "TRUE"
       VERSION: "24w26a"
-      TYPE: "SNAPSHOT"
+      TYPE: "VANILLA"      # This must be VANILLA even for snapshots!
       MEMORY: "3G"
     volumes:
       - ./minecraft-data:/data
